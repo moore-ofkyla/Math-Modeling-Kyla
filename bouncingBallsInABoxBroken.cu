@@ -275,7 +275,7 @@ void getForces()
 			float dx = Position[i].x - Position[j].x;
             float dy = Position[i].y - Position[j].y;
             float dz = Position[i].z - Position[j].z;
-            float distance = sqrt(dx * dx + dy * dy + dz * dz);
+            float distance = sqrt(dx * dx + dy * dy + dz * dz);//distance between the centers of the balls
             float overlap = SphereDiameter - distance;//determines if the balls are overlapping
 
             if (overlap > 0)
@@ -305,7 +305,7 @@ void getForces()
                 float impulse = (1.0 + restitution) * normalDotVelocity / 2.0;
 				//calulates the magnitude of the impulse. Divide by 2 because the impulse is distributed on both balls. 
 
-                Velocity[i].x -= impulse * normal.x / SphereMass;//calculates impulse in the x direction. scaled by the mass of the ball
+                Velocity[i].x -= impulse * normal.x / SphereMass;//calculates updated velocity in the x direction. scaled by the mass of the ball
                 Velocity[i].y -= impulse * normal.y / SphereMass;
                 Velocity[i].z -= impulse * normal.z / SphereMass;
 
