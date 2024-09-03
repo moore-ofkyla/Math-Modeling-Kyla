@@ -298,6 +298,7 @@ void getForces()
                 Force[j].y -= force.y;
                 Force[j].z -= force.z;
 
+		//All this stuff makes them bounce more realistically!
                 float relativeVelocityX = Velocity[i].x - Velocity[j].x;//realtive velocity V1-V2
                 float relativeVelocityY = Velocity[i].y - Velocity[j].y;
                 float relativeVelocityZ = Velocity[i].z - Velocity[j].z;
