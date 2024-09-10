@@ -360,8 +360,8 @@ void getForces()
 			
 			
 			float Gravity = (1*1*1)/(d*d*d);// G*m1*m2/(r^2).
-			/*Well G=1, m1 and m2=1, so yay.r is the distance between Mi and Mj. We can use the unit vector which is equivalent to (SphereDiameter(x,y,z),depends on the direction, 
-			over the magnitude,(SphereDiameter. So I just included the extra (SphereDiameter in the gravity equation and multipled by dx,dy,dz when calcuting the force in the repsective direction*/
+			/*Well G=1, m1 and m2=1, so yay.r is the distance between Mi and Mj. We can use the unit vector which is equivalent to d(x,y,z),depends on the direction, 
+			over the magnitude,d. So I just included the extra d in the gravity equation and multipled by dx,dy,dz when calcuting the force in the repsective direction*/
 			Force[i].x += Gravity * dx;
 			Force[i].y += Gravity * dy;
 			Force[i].z += Gravity * dz;
