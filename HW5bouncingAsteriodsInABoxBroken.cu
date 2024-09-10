@@ -1,4 +1,4 @@
-//nvcc bouncingAsteriodsInABoxBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
+//nvcc HW5bouncingAsteriodsInABoxBroken.cu -o bounce -lglut -lm -lGLU -lGL																													
 //To stop hit "control c" in the window you launched it from.
 #include <iostream>
 #include <fstream>
@@ -29,11 +29,12 @@ float MaxVelocity;
 int Trace;
 int Pause;
 // ????????????????????????????????????
+//A: I will fill them in later!
 // I did this for you you just need to fill them in later.
 float MassUnitConverter;
 float LengthUnitConverter;
 float TimeUnitConverter;
-float GavityConstant;
+float GravityConstant;
 
 // Window globals
 static int Window;
@@ -117,35 +118,39 @@ void setInitailConditions()
 	// If you divide an outside world unit by this number it will convert it to our units
 	// Set your convertion units then print them out.
 	// Uncomment these and fix them.
-	// MassUnitConverter = ???; // kg
-	// LengthUnitConverter = ???; // km
-	// TimeUnitConverter = ???; // hr
-	// printf("\n MassUnitConverter = %f kilograms", MassUnitConverter);
-	// printf("\n LengthUnitConverter = %f kilometers", LengthUnitConverter);
-	// printf("\n TimeUnitConverter = %f hours", TimeUnitConverter);
+	 MassUnitConverter = 9.383e20; // kg. 1omu=9.383x10^20 kg. (1omu=1 our mass unit).
+	 LengthUnitConverter = 940; // km 1olu=940 km
+	 TimeUnitConverter = 1.011; // hr. 1otu=3640sec= 1.011hr
+	 printf("\n MassUnitConverter = %.6f kilograms", MassUnitConverter);
+	 printf("\n LengthUnitConverter = %.6f kilometers", LengthUnitConverter);
+	 printf("\n TimeUnitConverter = %.6f hours", TimeUnitConverter);
 	
 	// ??????????????????????????????????????????????????????????
-	// Set the GavityConstant. and print it out.
+	//A: Our gravity constant is a nice 1, because we like 1 in math.  
+	// Set the GravityConstant. and print it out.
 	// Uncomment these and fix them.
-	// GavityConstant = ???;
-	// printf("\n The gavity constant = %f in our units", GavityConstant);
+	 GravityConstant = 1;
+	 printf("\n The gravity constant = %f in our units", GravityConstant);
 	
 	// ??????????????????????????????????????????????????????????
 	// Anything with a mass, time or length needs to be thought about.
 	// Coment about each of these. Most will may not need to be changed but just say why.
-	SphereDiameter = 0.5;
-	sphereRadius = SphereDiameter/2.0;
-	SphereMass = 1.0;
-	BoxSideLength = 5.0;
-	MaxVelocity = 10.0;
-	halfBoxSideLength = BoxSideLength/2.0;
-	
+	SphereDiameter = 1.0;//this should be 1 because that is "our" length unit
+	sphereRadius = SphereDiameter/2.0;//this if fine(once diameter is set to 1)
+	SphereMass = 1.0;//This is great we love 1
+	BoxSideLength = 10.0;//I made it a little bit more than 5(10), its just means ten ateroid lengths long
+	MaxVelocity = 10.755;//Needs to be in our units-->conversions. 10000 km/hr= 10.755 distance/time(in our units)
+	halfBoxSideLength = BoxSideLength/2.0;//This is fine. The math works regardless of what the BoxSideLength is. 
+	//we can see how gravity works if we set max velocity to 0, and turn up gravity.
+
+
 	// ??????????????????????????????????????????????????????????
 	// Print out how many kilometers long each box side is.
 	// Print out how many kilometers/hour the max Velocity is.
 	// Uncomment these and fix them.
-	//printf("\n Box side length = %f kilometers", ???);
-	//printf("\n Max velocity = %f kilometers/hour", ???);
+	printf("\n Box side length = %f kilometers", BoxSideLength*940);//Boxside length is in our units, so we need to multiply it by 940 to convert it to km
+	printf("\n Max velocity = %f kilometers/hour", MaxVelocity*(940/1.0111));
+	//Max velocity is in our length/our time. So to convert it to km/hr we need to multiply by (940 km/1.0111 hr).
 	
 	
 	for(int i = 0; i < NUMBER_OF_BALLS; i++)
@@ -188,12 +193,13 @@ void setInitailConditions()
 		// Asteriods are brown not just any color. 
 		// Well I have not seen many asteriods maybe they are all the colors in the rainbow.
 		// But make them brown anyway. 
+		//A: I made them brown, but choose to believe they could be rainbow. 
 		randomNumber = ((float)rand()/(float)RAND_MAX);
-		Color[i].x = randomNumber;
+		Color[i].x = 0.5;
 		randomNumber = ((float)rand()/(float)RAND_MAX);
-		Color[i].y = randomNumber;
+		Color[i].y = 0.24;
 		randomNumber = ((float)rand()/(float)RAND_MAX);
-		Color[i].z = randomNumber;
+		Color[i].z = 0.24;
 		
 		Force[i].x = 0.0;
 		Force[i].y = 0.0;
@@ -202,7 +208,7 @@ void setInitailConditions()
 	
 	// ?????????????????????????????????????????
 	// Make this a 10 day long run
-	TotalRunTime = 10000.0;
+	TotalRunTime = 237.36;//10 days=240 hours. 240/1.0111 otu= 237.36 out. 
 	RunTime = 0.0;
 	Dt = 0.001;
 }
@@ -337,19 +343,32 @@ void getForces()
 			// This causes the asteroids to bounce off of each other.
 			if(d < SphereDiameter)
 			{
-				magnitude = kBall*d;
+				magnitude = kBall*(SphereDiameter-d);//updated
 				// Doling out the force in the proper perfortions using unit vectors.
-				Force[i].x -= magnitude*(dx/d);
-				Force[i].y -= magnitude*(dy/d);
-				Force[i].z -= magnitude*(dz/d);
+				Force[i].x -= magnitude*dx/(d);
+				Force[i].y -= magnitude*dy/(d);
+				Force[i].z -= magnitude*dz/(d);
 				// A force on me causes the opposite force on you. 
-				Force[j].x += magnitude*(dx/d);
-				Force[j].y += magnitude*(dy/d);
-				Force[j].z += magnitude*(dz/d);
+				Force[j].x += magnitude*dx/(d);
+				Force[j].y += magnitude*dy/(d);
+				Force[j].z += magnitude*dz/(d);
 			}
 			
 			// ???????????????????????????????????????????????????????
-			// Add gravity between asteroids here.
+			// Add gravity between asteroids here. 
+			//Equation is GMiMj/r^2
+			
+			
+			float Gravity = (1*1*1)/(d*d*d);// G*m1*m2/(r^2).
+			/*Well G=1, m1 and m2=1, so yay.r is the distance between Mi and Mj. We can use the unit vector which is equivalent to (SphereDiameter(x,y,z),depends on the direction, 
+			over the magnitude,(SphereDiameter. So I just included the extra (SphereDiameter in the gravity equation and multipled by dx,dy,dz when calcuting the force in the repsective direction*/
+			Force[i].x += Gravity * dx;
+			Force[i].y += Gravity * dy;
+			Force[i].z += Gravity * dz;
+
+			Force[j].x -= Gravity * dx;
+			Force[j].y -= Gravity * dy;
+			Force[j].z -= Gravity * dz;
 			
 			
 			// Two elderly ladies get pulled over by a cop on I-35 in Dallas.
@@ -394,7 +413,7 @@ void nBody()
 	drawPicture();
 	// ??????????????????????????????????????????????
 	// Print the time out in hours.
-	printf("\n Time = %f hours ???", RunTime);
+	printf("\n Time = %f hours ", RunTime*1.0111);//RunTime is in our time units so we need to multiply it by 1.0111 hours to get into hours. 
 	RunTime += Dt;
 	
 	if(TotalRunTime < RunTime)
