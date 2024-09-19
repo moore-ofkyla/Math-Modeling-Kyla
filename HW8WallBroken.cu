@@ -87,13 +87,30 @@ void KeyPressed(unsigned char key, int x, int y)
 	if(key == 'k')
 	{
 		float4 pos, vel;
+		pos=centerOfMass();
+		 vel=linearVelocity(); 
 		Pause = 1;
 		terminalPrint();
 		// ??????????????????????????????????????????
 		// Zero out center of mass and linear velocity of the system.
 		
-		pos={0.0, 0.0, 0.0, 0.0};
-		vel={0.0, 0.0, 0.0, 0.0};
+		//zeros COM
+		for(int i=0; i< NUMBER_OF_BALLS; i++)
+		{
+		Position[i].x -= pos.x;
+		Position[i].y -= pos.y;
+		Position[i].z -= pos.z;
+		}
+		
+		//Zeros Linear Velocity
+		for(int i=0; i< NUMBER_OF_BALLS; i++)
+		{
+		Velocity[i].x -= vel.x;
+		Velocity[i].y -= vel.y;
+		Velocity[i].z -= vel.z;
+		}
+		
+	
 		drawPicture();
 		printf("\n The simulation has been zeroed out.\n");
 	}
@@ -112,6 +129,7 @@ void KeyPressed(unsigned char key, int x, int y)
 		
 		printf("\n The center of mass is ... x = %f, y = %f, z = %f",pos.x,pos.y,pos.z);
 		printf("\n The linear velocity is ... x = %f, y = %f, z = %f",vel.x,vel.y,vel.z);
+		printf("\n");
 		
 	}
 	
@@ -307,7 +325,7 @@ void drawPicture()
 }
 
 float4 centerOfMass()
-{k
+{
 	float4 centerOfMass;
 	
 	centerOfMass.x = 0.0;
