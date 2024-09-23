@@ -110,10 +110,10 @@ void KeyPressed(unsigned char key, int x, int y)
 		//New Linear Velocity
 		for(int i = 0; i < NUMBER_OF_BALLS; i++)
 		{
-			float newLinearVelocity=20.0;
-			Velocity[i].x = newLinearVelocity;//towards the wall. 
-			Velocity[i].y = 0.0;
-			Velocity[i].z = 0.0;
+			float newLinearVelocity=40.0;
+			Velocity[i].x += newLinearVelocity;//towards the wall. 
+			Velocity[i].y += 0.0;
+			Velocity[i].z += 0.0;
 			
 		}
 	}
@@ -361,7 +361,7 @@ float4 centerOfMass()
 	
 	for(int i = 0; i < NUMBER_OF_BALLS; i++)
 	{
-    		centerOfMass.x += Position[i].x*SphereMass;
+    	centerOfMass.x += Position[i].x*SphereMass;
 		centerOfMass.y += Position[i].y*SphereMass;
 		centerOfMass.z += Position[i].z*SphereMass;
 		totalMass += SphereMass;
@@ -400,9 +400,11 @@ float4 linearVelocity()
 void getForces()
 {
 	float inOut;
-	float kSphereReduction;
+	float kWallReduction;
 	float dvx, dvy, dvz;
+	float kWall;
 	float kSphere;
+	float kSphereReduction;
 	float sphereRadius = SphereDiameter/2.0;
 	float d, dx, dy, dz;
 	float magnitude;
@@ -414,26 +416,33 @@ void getForces()
 		Force[i].y = 0.0;
 		Force[i].z = 0.0;
 	}
-	for(int i = 0; i < NUMBER_OF_BALLS; i++)
-	{
+	kWall = 10000.0;
+	kWallReduction = 0.5;
 	kSphere = 10000.0;
 	kSphereReduction = 0.5;
-	
-		float howMuch;
-		// ?????????????????????????????????????????????????????
-		// Make the asteriods inilastically bounce off the wall.
-		{
-			if(Position[i].x+sphereRadius > 25.0 )
-			{
-				howMuch=(Position[i].x+sphereRadius) -25.0; 
-				if(Velocity[i].x > 0.0) kSphere *=kSphereReduction;
-				Force[i].x += kSphere*howMuch;
-			}
-		}
+	for(int i = 0; i < NUMBER_OF_BALLS; i++)
+	{
+
 	
 		
+		// ?????????????????????????????????????????????????????
+		// Make the asteriods inilastically bounce off the wall.
+		
+				if(Position[i].x+sphereRadius > 25.0 && Position[i].x-sphereRadius < 26.0)//checks if ball's x position is touching the wall
+				{
+				if( Position[i].y-sphereRadius > -5.0 && Position[i].y+sphereRadius < 5.0 && Position[i].z-sphereRadius > -5.0 && Position[i].z+sphereRadius < 5.0)
+				//then checks if the ball's y position is touching the wall. 
+				{
+					if(Velocity[i].x< 0.0) magnitude=kWall*kWallReduction;
+					else magnitude=kWall;
+					//going away from wall, we want to reduce it's spring force
+					Force[i].x -= magnitude*(Position[i].x+sphereRadius-25);//how much the ball is overlaping times the spring constant(either reduced or regular) 
+				}
+				}
+		
+		
 		// This adds forces between asteriods.
-		for(int j = 0; j < NUMBER_OF_BALLS; j++)
+		for(int j = 0; j < i; j++)
 		{
 			dx = Position[j].x - Position[i].x;
 			dy = Position[j].y - Position[i].y;
